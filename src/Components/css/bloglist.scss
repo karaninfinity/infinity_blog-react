@@ -1,0 +1,35 @@
+body .Blogsidebar{
+    &__widget{
+        border-bottom: 1px solid #00000024;
+        svg{
+            font-size: 2.4rem;
+        }
+    }
+    &__cardwrapper{
+    }
+    &__blog-card{
+        background-color: #f2f4f5; 
+        width: 48%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);         
+    }
+    &__blog-logo{
+        img{
+            height: 2.4rem;
+            border-radius: 0.5rem;
+        }
+    }
+    .justify-content-around{
+        column-gap: 10px;
+    }
+}
+body .bloglist{
+    img{
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+    &__card{
+        border-radius: 10px;
+        width: 30%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+}

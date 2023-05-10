@@ -1,0 +1,31 @@
+.LoginPage{
+    background-image: url('../1172832_6101.jpg');
+    background-size: cover;
+    height: 100vh;
+    color: #526DA8;
+    &__Header{
+        position: relative;
+    }
+    &__welcome{
+        position: absolute;
+        top: 6rem;
+        color: white;
+        left: 4rem;
+        margin-right: 2rem;
+    }
+    &__btn{
+        background-color: #526DA8 !important;
+        border-color: #526DA8 !important;
+    }
+    input{
+        background-color: #526DA8;
+        border: none;
+        height: 3.5rem;
+    }
+    ::-webkit-input-placeholder {
+        color: green;
+    }
+}
+.btn{
+    font-size: 2rem;
+}
