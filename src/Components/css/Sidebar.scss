@@ -1,32 +1,40 @@
-.admin{
-    .col-md-2{
+.admin {
+    .col-md-2 {
         padding-right: 0;
     }
-    .col-md-10{
+
+    .col-md-10 {
         padding-left: 0;
     }
-    &__sidebar{
+
+    &__sidebar {
         box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
         height: 100vh;
     }
-    &__logo{
+
+    &__logo {
         text-align: center;
         border-bottom: 1px solid #00000024;
-        img{
-            width: 12rem;
+
+        img {
+            width: 16rem;
         }
     }
-    &__list{
+
+    &__list {
         list-style: none;
         padding: 0;
-        a{
-            color:#99abb4;
+
+        a {
+            color: #99abb4;
             font-size: 1.4rem;
         }
-        div{
-            &:hover{
+
+        div {
+            &:hover {
                 background-color: #ececec;
-                a{
+
+                a {
                     color: #5c4ac7;
                 }
             }

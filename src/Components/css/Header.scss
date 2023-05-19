@@ -1,16 +1,18 @@
-// @import url('https://use.typekit.net/tvl1mnp.css');
+@import url('https://use.typekit.net/tvl1mnp.css');
 $kobenhavn: 'kobenhavn-sans', sans-serif;
 $kobenhavnBold: 'kobenhavn', serif;
 
-.header{
-    &__link{
+body .header {
+    &__link {
         letter-spacing: .2rem;
-        font-weight: 300 !important;
-        line-height: 2rem !important;
+        font-weight: 200;
+        line-height: 2rem;
         text-decoration: none;
     }
-    &__navlink{
+
+    &__navlink {
         font-size: 1.6rem;
-        font-family:'kobenhavn', serif;
+        font-family: 'kobenhavn-sans', sans-serif;
+        font-weight: 200;
     }
 }

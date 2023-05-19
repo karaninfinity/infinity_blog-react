@@ -1,0 +1,28 @@
+.errorPage {
+    height: 100vh;
+
+    h1 {
+        font-size: 8rem;
+        color: #3b76be;
+    }
+
+    P {
+        font-size: 2.5rem;
+    }
+
+    &__btn {
+        font-size: 1.5rem;
+        border: 1px solid transparent;
+        color: #fff;
+        padding: 1rem 3rem;
+        background-color: #3b76be;
+        border-radius: .3rem;
+
+        &:hover {
+            border: 1px solid #3b76be;
+            color: black;
+            transition: .2s;
+            background: transparent;
+        }
+    }
+}
