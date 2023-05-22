@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import image from '../../Images/image.jpg';
-import { Container } from 'react-bootstrap';
-import { Image } from 'react-bootstrap';
-import { Button } from 'react-bootstrap';
-import { Card } from 'react-bootstrap';
-import { Col } from 'react-bootstrap';
-import { Row } from 'react-bootstrap';
+import { Button, Card, Col, Row } from 'react-bootstrap';
 import '../../css/Login.scss';
 import axios from 'axios';
 import Api_url from '../../../Request';
@@ -22,7 +17,7 @@ export default function Login() {
     }
 
     useEffect(() => {
-        axios.get(`${Api_url}/api/user`, {
+        axios.get(`${Api_url}/user`, {
             method: 'GET',
             headers: {
                 'Access-Control-Allow-Origin': '*',
@@ -38,7 +33,7 @@ export default function Login() {
     function Login() {
 
         sessionStorage.setItem('user', Username);
-        if (Username === 'admin124' && Email === 'tanamy@gmail.com') {
+        if (Username === 'admin' && Email === 'abc@gmail.com') {
             navigate('/admin');
         }
     }

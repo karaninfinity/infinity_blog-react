@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import Header from './Header'
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Api_url from '../../Request';
 import { Button, Modal, Table } from 'react-bootstrap'
@@ -11,13 +10,51 @@ const Blogs = () => {
     const [Category, setCategory] = useState([]);
     const [Subcategory, setSubcategory] = useState([]);
     const [Selcategory, setSelcategory] = useState('');
+    const [blogImage, setBlogImage] = useState(null);
+    const [thumbnailImage, setThumbnailImage] = useState(null);
+    const [updateBlogId, setUpdateBlogId] = useState(null);
 
-    const [deleteId, setDeleteId] = useState('');
+    function Insert() {
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => {
-        setShow(true);
-        fetch(`${Api_url}app/category`, {
+        let data = new FormData();
+        data.append('cId', document.getElementById('Subcategory').value);
+        data.append('iParentCatID', document.getElementById('Category').value);
+        data.append('vBlogTitle', document.getElementById('blog_title').value);
+        data.append('vBlogDescription', document.getElementById('blog_discription').value);
+        data.append('vBlogFeatureImage', blogImage);
+        data.append('vBlogThumbnailImage', thumbnailImage);
+        data.append('tCreatedDate', new Date().toISOString().slice(0, 10));
+        data.append('tUpdatedDate', '2023-05-05');
+
+        axios.post(`${Api_url}/blog`, data, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+            .then(result => console.log(result.data))
+            .catch(error => console.error('Error uploading blog:', error));
+
+        handleClose();
+        getBlog();
+    }
+
+    function getBlog() {
+        axios.get(`${Api_url}/blog`, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*'
+            }
+        })
+            .then(resp => {
+                console.log(resp.data);
+                setData(resp.data)
+            })
+    }
+
+    function getCategory() {
+        fetch(`${Api_url}/category`, {
             method: 'GET',
             headers: {
                 'Access-Control-Allow-Origin': '*',
@@ -31,26 +68,9 @@ const Blogs = () => {
             });
     }
 
-    useEffect(() => {
-        axios.get(`${Api_url}/app/blog`, {
-            method: 'GET',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': '*',
-            }
-        })
-            .then(resp => {
-                console.log(resp.data);
-                setData(resp.data)
-            })
-    },
-        [])
-    useEffect(() => {
-        getSubcategory();
-    }, [Selcategory])
     function getSubcategory() {
 
-        axios.get(`${Api_url}/category/iParentCatID/` + Selcategory, {
+        axios.get(`${Api_url}/category/iParentCatID/${Selcategory}`, {
             method: 'GET',
             headers: {
                 'Access-Control-Allow-Origin': '*',
@@ -62,45 +82,74 @@ const Blogs = () => {
                 console.log(result.data)
             })
     }
-    function Insert() {
 
-        let data = {
-            cId: document.getElementById('Subcategory').value,
-            iParentCatID: document.getElementById('Category').value,
-            vBlogTitle: document.getElementById('blog_title').value,
-            vBlogDescription: document.getElementById('blog_discription').value,
-            vBlogFeatureImage: document.getElementById('BlogFeatureImage').value,
-            vBlogThumbnailImage: document.getElementById('ThumbnailImage').value,
-            tCreatedDate: new Date().toISOString().slice(0, 10),
-            tUpdatedDate: "2023-05-05",
-        }
-
-        fetch(`${Api_url}/app/blog`, {
-
-            method: 'POST',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': '*',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-            .then(resp => resp.json())
-            .then(result => console.log(result))
-    }
-
-    let DeleteBlog = (e) => {
-        setDeleteId(e.target.id);
-        fetch(`${Api_url}/app/blog/bId` + deleteId, {
-            method: 'DELETE',
+    function DeleteBlog(id) {
+        axios.delete(`${Api_url}/blog/${id}`, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Headers': '*',
             }
         })
-            .then(resp => resp.json())
-            .then(result => console.log);
+        getBlog();
     }
+
+    function resetFormFields() {
+        document.getElementById('Category').value = '';
+        document.getElementById('Subcategory').value = '';
+        document.getElementById('blog_title').value = '';
+        document.getElementById('blog_discription').value = '';
+        setBlogImage('');
+        setThumbnailImage('');
+        setUpdateBlogId(null);
+    }
+
+    function updateBlog() {
+        const updatedData = {
+            cId: document.getElementById('Subcategory').value,
+            iParentCatID: document.getElementById('Category').value,
+            vBlogTitle: document.getElementById('blog_title').value,
+            vBlogDescription: document.getElementById('blog_discription').value,
+            tUpdatedDate: new Date().toISOString().slice(0, 10),
+        };
+        axios.put(`${Api_url}/blog/${updateBlogId}`, updatedData)
+            .then(result => console.log(result));
+        getBlog();
+    }
+
+    function handleUpdateClick(id) {
+        let UpdateBlog = Data.find(item => item.bId === id)
+        console.log(UpdateBlog);
+        if (UpdateBlog) {
+            setUpdateBlogId(id);
+            handleShow();
+        }
+    }
+
+    function handleFormSubmit() {
+        if (updateBlogId) {
+            updateBlog();
+        } else {
+            Insert();
+        }
+    }
+
+    const handleClose = () => {
+        setShow(false);
+        resetFormFields();
+    };
+    const handleShow = () => {
+        getCategory();
+        setShow(true);
+    }
+
+    useEffect(() => {
+        getBlog();
+    }, [])
+
+    useEffect(() => {
+        getSubcategory();
+    }, [Selcategory])
+
 
     return (
         <>
@@ -126,8 +175,8 @@ const Blogs = () => {
                                 <td>{item.vCategoryName}</td>
                                 <td>{item.vBlogDescription}</td>
                                 <td>
-                                    <Button> Update </Button>
-                                    <Button id={item.bId} className='ms-2' variant='danger' onClick={DeleteBlog}> Delete </Button>
+                                    <Button onClick={() => handleUpdateClick(item.bId)}> Update </Button>
+                                    <Button className='ms-2' variant='danger' onClick={() => DeleteBlog(item.bId)}> Delete </Button>
                                 </td>
                             </tr>
                         ))
@@ -139,7 +188,7 @@ const Blogs = () => {
                 onHide={handleClose}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal title</Modal.Title>
+                    <Modal.Title>{updateBlogId ? 'Update Blog' : 'Add New Blog'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form action="">
@@ -147,7 +196,7 @@ const Blogs = () => {
                             <option selected>Select Category</option>
                             {
                                 Category.map(item => (
-                                    <option value={item.cId}>{item.vCategoryName}</option>
+                                    <option key={item.cId} value={item.cId}>{item.vCategoryName}</option>
                                 ))
                             }
                         </select>
@@ -155,7 +204,7 @@ const Blogs = () => {
                             <option selected>Subcategory</option>
                             {
                                 Subcategory.map(item => (
-                                    <option value={item.cId}>{item.vCategoryName}</option>
+                                    <option key={item.cId} value={item.cId}>{item.vCategoryName}</option>
                                 ))
                             }
                         </select>
@@ -169,11 +218,11 @@ const Blogs = () => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="Image">Image</label>
-                            <input className='form-control' type="file" name="" id="BlogFeatureImage" />
+                            <input className='form-control' type="file" name="" id="BlogFeatureImage" onChange={(e) => setBlogImage(e.target.files[0].name)} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="Image">Thumbnail Image</label>
-                            <input className='form-control' type="file" name="" id="ThumbnailImage" />
+                            <input className='form-control' type="file" name="" id="ThumbnailImage" onChange={(e) => setThumbnailImage(e.target.files[0].name)} />
                         </div>
                     </form>
                 </Modal.Body>
@@ -181,7 +230,7 @@ const Blogs = () => {
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={Insert}>Save</Button>
+                    <Button variant="primary" type='btn' onClick={handleFormSubmit}>{updateBlogId ? 'Update' : 'Save'}</Button>
                 </Modal.Footer>
             </Modal>
         </>
