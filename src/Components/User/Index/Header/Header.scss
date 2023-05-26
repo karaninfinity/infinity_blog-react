@@ -1,0 +1,18 @@
+@import url('https://use.typekit.net/tvl1mnp.css');
+$kobenhavn: 'kobenhavn-sans', sans-serif;
+$kobenhavnBold: 'kobenhavn', serif;
+
+body .header {
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(221, 229, 234, 0.5);
+    box-shadow: 0 -1px 4px #00000040;
+    &__nav {
+        justify-content: end;
+        padding: 1rem 0;
+        a {
+            padding: 0 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+        }
+    }
+}

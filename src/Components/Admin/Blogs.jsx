@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Api_url from '../../Request';
-import { Button, Modal, Table } from 'react-bootstrap'
+import { Button, Modal, Table } from 'react-bootstrap';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const Blogs = () => {
 
@@ -13,29 +15,49 @@ const Blogs = () => {
     const [blogImage, setBlogImage] = useState(null);
     const [thumbnailImage, setThumbnailImage] = useState(null);
     const [updateBlogId, setUpdateBlogId] = useState(null);
+    const [content, setContent] = useState('');
+    const [descriptions, setDescriptions] = useState([]);
 
     function Insert() {
 
-        let data = new FormData();
-        data.append('cId', document.getElementById('Subcategory').value);
-        data.append('iParentCatID', document.getElementById('Category').value);
-        data.append('vBlogTitle', document.getElementById('blog_title').value);
-        data.append('vBlogDescription', document.getElementById('blog_discription').value);
-        data.append('vBlogFeatureImage', blogImage);
-        data.append('vBlogThumbnailImage', thumbnailImage);
-        data.append('tCreatedDate', new Date().toISOString().slice(0, 10));
-        data.append('tUpdatedDate', '2023-05-05');
+        let data =
+        {
+            cId: 2,
+            iParentCatID: 5,
+            vBlogTitle: document.getElementById('blog_title').value,
+            vBlogDescription: document.getElementById('blog_title').value,
+            // vBlogFeatureImage: '',
+            // vBlogThumbnailImage: '',
+            tCreatedDate: new Date().toISOString().slice(0, 10),
+            tUpdatedDate: '2023-05-05'
+        };
 
-        axios.post(`${Api_url}/blog`, data, {
+        fetch(`${Api_url}/blog`, {
+            method: 'POST',
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Headers': '*',
-                'Content-Type': 'multipart/form-data',
+                // 'Content-Type': 'multipart/form-data',
+                'Content-Type': 'appilcation/json',
             },
+            body: JSON.stringify(data)
         })
-            .then(result => console.log(result.data))
+            .then(resp => resp.json())
+            .then(result => {
+                console.log(result)
+                // let Description = {
+                //     bId: result.data.bId,
+                //     vBlogDescription: descriptions.join(','),
+                //     description_img: '',
+                //     tCreatedDate: new Date().toISOString().slice(0, 10),
+                //     tUpdatedDate: '2021-06-21',
+                // }
+                // console.log(Description);
+                // axios.post(`${Api_url}/description/`, Description)
+                //     .then(resp => console.log(resp))
+            }
+            )
             .catch(error => console.error('Error uploading blog:', error));
-
         handleClose();
         getBlog();
     }
@@ -136,11 +158,26 @@ const Blogs = () => {
     const handleClose = () => {
         setShow(false);
         resetFormFields();
-    };
+    }
     const handleShow = () => {
         getCategory();
         setShow(true);
     }
+
+    const handleAddDescription = () => {
+        setDescriptions([...descriptions, '']);
+    };
+
+    const handleDescriptionChange = (index, value) => {
+        const updatedDescriptions = [...descriptions];
+        updatedDescriptions[index] = value;
+        setDescriptions(updatedDescriptions);
+    };
+
+    const handleRemoveDescription = (index) => {
+        const updatedDescriptions = descriptions.filter((_, i) => i !== index);
+        setDescriptions(updatedDescriptions);
+    };
 
     useEffect(() => {
         getBlog();
@@ -169,11 +206,12 @@ const Blogs = () => {
                 <tbody>
                     {
                         Data.map(item => (
+
                             <tr key={item.bId}>
                                 <td></td>
                                 <td>{item.vBlogTitle}</td>
                                 <td>{item.vCategoryName}</td>
-                                <td>{item.vBlogDescription}</td>
+                                <td dangerouslySetInnerHTML={{ __html: item.vBlogDescription }}></td>
                                 <td>
                                     <Button onClick={() => handleUpdateClick(item.bId)}> Update </Button>
                                     <Button className='ms-2' variant='danger' onClick={() => DeleteBlog(item.bId)}> Delete </Button>
@@ -213,16 +251,30 @@ const Blogs = () => {
                             <input type="text" className="form-control" id="blog_title" aria-describedby="" placeholder="Blog Title" />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="blog discription">Blog Discription</label>
+                            <label htmlFor={`blog_discription`}>Blog Description</label>
                             <input type="text" className="form-control" id="blog_discription" aria-describedby="" placeholder="Blog Discription" />
+                            {descriptions.map((description, index) => (
+                                <div key={index} className="form-group">
+                                    <ReactQuill
+                                        className='my-3'
+                                        value={description}
+                                        onChange={(value) => handleDescriptionChange(index, value)}
+                                        id={`blog_discription_${index}`}
+                                    />
+                                    <Button variant='danger' onClick={() => handleRemoveDescription(index)}>Remove</Button>
+                                </div>
+                            ))}
                         </div>
+                        <Button className='my-2' onClick={handleAddDescription}>
+                            Add addition blog description
+                        </Button>
                         <div className="form-group">
                             <label htmlFor="Image">Image</label>
-                            <input className='form-control' type="file" name="" id="BlogFeatureImage" onChange={(e) => setBlogImage(e.target.files[0].name)} />
+                            <input className='form-control' accept="image/*" type="file" name="" id="BlogFeatureImage" onChange={(e) => setBlogImage(e.target.files[0])} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="Image">Thumbnail Image</label>
-                            <input className='form-control' type="file" name="" id="ThumbnailImage" onChange={(e) => setThumbnailImage(e.target.files[0].name)} />
+                            <input className='form-control' accept="image/*" type="file" name="" id="ThumbnailImage" onChange={(e) => setThumbnailImage(e.target.files[0])} />
                         </div>
                     </form>
                 </Modal.Body>
